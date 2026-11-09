@@ -1,0 +1,7 @@
+#!/bin/bash
+set -euo pipefail
+mysql --protocol=socket -uroot -p"$MYSQL_ROOT_PASSWORD" <<SQL
+CREATE USER IF NOT EXISTS '${APP_DB_USER}'@'%' IDENTIFIED BY '${APP_DB_PASSWORD}';
+GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE ON \`${MYSQL_DATABASE}\`.* TO '${APP_DB_USER}'@'%';
+FLUSH PRIVILEGES;
+SQL

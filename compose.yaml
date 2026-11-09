@@ -1,0 +1,61 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-local_root_password}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-event_ticket_reservation}
+      APP_DB_USER: ${APP_DB_USER:-event_app}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:-local_app_password}
+    ports: ["3306:3306"]
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./01_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./02_sample_data.sql:/docker-entrypoint-initdb.d/02_sample_data.sql:ro
+      - ./db/03_app_user.sh:/docker-entrypoint-initdb.d/03_app_user.sh:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  mongodb:
+    image: mongo:8
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-event_ticket_reservation}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-mongo_root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-local_mongo_root_password}
+      MONGO_APP_USER: ${MONGO_APP_USER:-event_app}
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD:-local_mongo_password}
+    ports: ["27017:27017"]
+    volumes:
+      - mongo_data:/data/db
+      - ./db/02_mongo_app_user.sh:/docker-entrypoint-initdb.d/02_mongo_app_user.sh:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      mysql: { condition: service_healthy }
+      mongodb: { condition: service_healthy }
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-event_ticket_reservation}
+      MYSQL_USER: ${APP_DB_USER:-event_app}
+      MYSQL_PASSWORD: ${APP_DB_PASSWORD:-local_app_password}
+      MONGODB_URI: mongodb://${MONGO_APP_USER:-event_app}:${MONGO_APP_PASSWORD:-local_mongo_password}@mongodb:27017/?authSource=${MONGO_INITDB_DATABASE:-event_ticket_reservation}
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-event_ticket_reservation}
+      AUTH_SECRET: ${AUTH_SECRET:-local-development-secret-change-before-deployment-32-chars}
+      DEMO_ADMIN_PASSWORD: ${DEMO_ADMIN_PASSWORD:-AdminDemo2026!}
+      DEMO_CUSTOMER_PASSWORD: ${DEMO_CUSTOMER_PASSWORD:-CustomerDemo2026!}
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+      NODE_ENV: production
+    ports: ["3000:3000"]
+volumes:
+  mysql_data:
+  mongo_data:

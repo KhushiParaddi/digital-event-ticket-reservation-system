@@ -1,0 +1,20 @@
+{
+  "name": "digital-event-ticket-reservation-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0",
+    "build": "next build",
+    "start": "next start --hostname 0.0.0.0",
+    "db:setup": "node --env-file=.env scripts/setup-db.mjs",
+    "db:seed": "node --env-file=.env scripts/seed.mjs",
+    "test:smoke": "node --env-file=.env scripts/smoke-test.mjs"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3", "jose": "^6.1.4", "mongodb": "^7.8.0", "mysql2": "^3.24.6",
+    "next": "^16.4.5", "react": "^19.2.0", "react-dom": "^19.2.0", "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.0", "@types/react": "^19.2.0", "@types/react-dom": "^19.2.0", "typescript": "^5.9.3"
+  }
+}
