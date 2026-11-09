@@ -1,0 +1,69 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Browse events and reserve tickets in a simple event ticketing demo.">
+  <title>Evently — Event tickets</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Evently home"><span class="brand-mark">E</span> evently</a>
+    <nav aria-label="Main navigation">
+      <a href="#events">Explore events</a>
+      <a href="#my-bookings">My bookings <span id="booking-count" class="nav-count">0</span></a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">MAKE ROOM FOR A GOOD TIME</p>
+        <h1>Your next great<br>night starts here.</h1>
+        <p class="hero-description">Find a show, pick your seats, and get out there.</p>
+        <a class="button button-light" href="#events">Browse events <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="hero-art" aria-hidden="true"><span class="art-sun"></span><span class="art-ring"></span><span class="art-ticket">ADMIT<br>ONE</span><span class="art-star">✳</span></div>
+      <div class="hero-note"><span class="live-dot"></span> Good plans are just around the corner</div>
+    </section>
+
+    <section id="events" class="content-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">PICK YOUR PLANS</p><h2>Events worth going out for</h2></div>
+        <label class="city-filter">City
+          <select id="city-filter" aria-label="Filter events by city"><option value="all">All cities</option></select>
+        </label>
+      </div>
+      <div id="event-list" class="event-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="my-bookings" class="content-section bookings-section">
+      <div class="section-heading">
+        <div><p class="eyebrow">YOUR PLANS</p><h2>My bookings</h2></div>
+        <button id="clear-demo" class="text-button" type="button">Reset demo data</button>
+      </div>
+      <div id="booking-list" class="booking-list" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer><a class="brand footer-brand" href="#top"><span class="brand-mark">E</span> evently</a><span>Made for good nights out.</span></footer>
+
+  <dialog id="booking-dialog" aria-labelledby="dialog-title">
+    <form id="booking-form" method="dialog">
+      <button class="dialog-close" type="button" aria-label="Close">×</button>
+      <p class="eyebrow">SAVE YOUR SPOT</p>
+      <h2 id="dialog-title">Book tickets</h2>
+      <p id="dialog-event" class="dialog-event"></p>
+      <label>Your name<input id="customer-name" name="name" autocomplete="name" required maxlength="80" placeholder="e.g. Alex Morgan"></label>
+      <label>Ticket type<select id="ticket-type" name="ticket" required></select></label>
+      <label>Number of tickets<input id="ticket-quantity" name="quantity" type="number" min="1" max="8" value="1" required></label>
+      <div class="total-row"><span>Total</span><strong id="booking-total">₹0</strong></div>
+      <button class="button button-dark submit-button" type="submit">Confirm booking</button>
+      <p class="small-note">Demo only — no payment will be taken.</p>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
