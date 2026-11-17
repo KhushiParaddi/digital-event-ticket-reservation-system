@@ -20,7 +20,7 @@ try {
   const adminHash=await bcrypt.hash(adminPassword,12);
   const customerHash=await bcrypt.hash(customerPassword,12);
   await sql.execute("UPDATE Users SET password_hash=?,role='ADMIN' WHERE email='aarav@example.com'",[adminHash]);
-  await sql.execute("UPDATE Users SET password_hash=?,role='CUSTOMER' WHERE email<>'aarav@example.com'",[customerHash]);
+  await sql.execute("UPDATE Users SET password_hash=?,role='CUSTOMER' WHERE email='diya@example.com'",[customerHash]);
   await mongo.connect();
   const collection=mongo.db(process.env.MONGODB_DATABASE??'event_ticket_reservation').collection('event_content');
   await collection.createIndex({eventId:1},{unique:true});
