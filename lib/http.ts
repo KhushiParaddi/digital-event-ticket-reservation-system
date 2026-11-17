@@ -18,6 +18,26 @@ export function validationError(message: string) {
 }
 
 export function sameOrigin(request: Request) {
-  const origin = request.headers.get('origin');
-  return !origin || origin === new URL(request.url).origin;
+  const rawOrigin = request.headers.get('origin');
+  if (!rawOrigin) return true;
+
+  let origin: URL;
+  try {
+    origin = new URL(rawOrigin);
+  } catch {
+    return false;
+  }
+
+  const requestUrl = new URL(request.url);
+  if (origin.origin === requestUrl.origin) return true;
+
+  // Behind a reverse proxy, Next's request URL can use the internal host or
+  // protocol. Compare against the public host/protocol forwarded by the proxy.
+  const firstHeaderValue = (value: string | null) => value?.split(',')[0]?.trim();
+  const host = firstHeaderValue(request.headers.get('x-forwarded-host'))
+    ?? request.headers.get('host');
+  const protocol = firstHeaderValue(request.headers.get('x-forwarded-proto'))
+    ?? requestUrl.protocol.slice(0, -1);
+
+  return Boolean(host && origin.origin === `${protocol}://${host}`);
 }
