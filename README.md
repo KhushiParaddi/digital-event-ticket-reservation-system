@@ -1,6 +1,6 @@
 # Event reservation app
 
-## Start locally
+## Start locally.
 
 Requirements: Node.js 22+, Docker Desktop with Compose.
 
